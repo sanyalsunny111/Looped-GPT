@@ -2,15 +2,15 @@
 
 ---
 <p align="left">
-  <img src="Figures/Looped-GPT.png" alt="Looped-GPT logo" width="500">
+  <img src="Figures/Looped-GPT.png" alt="Looped-GPT logo" width="300">
 </p>
 
-**Looped-GPT** is a minimal, lightweight, and highly hackable implementation of **Looped Transformers** built on top of GPT architecture.
+**Looped-GPT** is a minimal, lightweight, and highly hackable implementation of **Looped Transformer** built on top of GPT architecture.
 
 ---
 
 <p align="left">
-  <img src="Figures/main_figure.png" alt="GPT-2 OpenWebText training curve" width="800">
+  <img src="Figures/main_figure.png" alt="GPT-2 OpenWebText training curve" width="600">
   <br>
   <em><strong>Figure 1.</strong> Looped-GPT architecture visualization.</em>
 </p>
@@ -19,7 +19,7 @@
 
 ## Looped-GPT Pre-Training
 
-Looped-GPT has **reverse residual connection(s)** that feeds the output of the final transformer block (layer) back into the input embedding. 
+Looped-GPT has **reverse residual connection** that feeds the output of the final transformer block (layer) back into the input embedding. 
 Unlike standard Transformer residuals, which operate in the forward direction by connecting a module’s input to its output or 
 by connecting early layers to deeper ones via highway connections, Looped-GPT reverses this flow: a deeper representation is 
 residually injected into a lower layer. During training, the model performs (K) forward passes i.e. K-1 refinement steps followed by a final forward pass and a single backward pass, 
@@ -75,9 +75,9 @@ higher generalization compared to the baseline. This experiment is fully reprodu
 
 
 <p align="left">
-  <img src="Figures/gpt2-openwebtext.png" alt="GPT-2 OpenWebText training curve" width="800">
+  <img src="Figures/gpt2-openwebtext.png" alt="GPT-2 OpenWebText training curve" width="600">
   <br>
-  <em><strong>Figure 2.</strong> Validation loss vs. training steps for a standard GPT-2 Medium (355M) model (**Baseline**) and same-size Looped-GPT models with loop steps K = 2 and K = 4. 
+  <em><strong>Figure 2.</strong> Validation loss vs. training steps for a standard GPT-2 Medium (355M) model (<strong>Baseline</strong>) and same-size Looped-GPT models (<strong>Ours</strong>) with loop steps K = 2 and K = 4. 
 All models are trained on OpenWebText for 40K steps (15.73B tokens) under similar training configurations.</em>
 </p>
 
@@ -90,12 +90,13 @@ In **Figure 3**, we report total tokens versus training loss. We observe a thema
 where Looped-LLAMA outperforms the baseline. This experiment is not reproducible using this codebase, as the repository is intentionally kept minimal for simplicity.
 
 <p align="left">
-  <img src="Figures/llama-fineweb.png" alt="GPT-2 OpenWebText training curve" width="800">
+  <img src="Figures/llama-fineweb.png" alt="GPT-2 OpenWebText training curve" width="600">
   <br>
-  <em><strong>Figure 3.</strong> Train loss vs. total tokens (in billions) for a standard LLAMA (282M) model (**Baseline**) and same-size Looped-LLAMA model with loop steps K = 2. 
+  <em><strong>Figure 3.</strong> Train loss vs. total tokens (in billions) for a standard LLAMA (282M) model (<strong>Baseline</strong>) and same-size Looped-LLAMA model (<strong>Ours</strong>) with loop steps K = 2. 
 All models are trained on Fineweb for 10B tokens (75K steps) under similar training configurations.</em>
 </p>
 
+---
 
 ## Intuition: Why Looping leads to better generalization?
 
@@ -107,6 +108,7 @@ but also the nuanced representations provided by the deeper layers. This whole p
 The standard GPT's loss landscape should be more jacked up compared it's Looped counterpart. Hence we can intuitively assume that loss landscape should be less jacked up compared to
 standard GPT.
 
+---
 
 ## Reproduce Our Results
 
@@ -130,11 +132,15 @@ $ python data/openwebtext/prepare.py
 $ python train.py
 ```
 
+---
+
 ## Limitations of this Codebase
 
 - This codebase is not optimized for inference.
 - This pre-training approach may require additional compute; however, this is also true for other architectures such as MoEs. If an architecture or training recipe achieves consistently better generalization, it deserves 
 to be studied carefully despite higher compute costs.
+
+---
 
 ## References (Extended Reading)
 
@@ -143,6 +149,8 @@ to be studied carefully despite higher compute costs.
 ](https://arxiv.org/abs/2502.05171)
 - [Scaling Latent Reasoning via Looped Language Models](https://arxiv.org/abs/2510.25741)
 - [Pretraining Language Models to Ponder in Continuous Space](https://arxiv.org/abs/2505.20674)
+
+---
 
 ## Acknowledgements
 
