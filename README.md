@@ -7,7 +7,11 @@
 
 **Looped-GPT** is a minimal, lightweight, and highly hackable implementation of **Looped Transformer** built on top of GPT architecture.
 
+**Author:** Sunny Sanyal  
+**First posted:** January 15, 2026
+
 ---
+
 
 <p align="left">
   <img src="Figures/main_figure.png" alt="GPT-2 OpenWebText training curve" width="600">
