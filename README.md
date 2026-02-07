@@ -8,7 +8,8 @@
 **Looped-GPT** is a minimal, lightweight, and highly hackable implementation of **Looped Transformer** built on top of GPT architecture.
 
 **Author:** Sunny Sanyal  
-**First posted:** January 15, 2026
+**First posted:** January 15, 2026 \
+**Updated on:** February 7, 2026
 
 ---
 
@@ -71,12 +72,11 @@ recurrence and not timewise recurrence we call this BPTD. We have not applied an
 
 ## Pre-training Results (355M GPT2 model with OpenWebText)
 
-We trained a standard GPT-2 model with 355M parameters (**Baseline**) on OpenWebText which has 9B unique tokens. 
+We trained a standard GPT-2 model with 355M parameters (**Baseline**) on OpenWebText which has 9B tokens. 
 The model was trained with an effective batch size of 394K tokens and processed 15.73B tokens in total via data repetition. 
 We then trained two same-size Looped-GPT (355M) variants (**Ours**) with loop steps \(K = 2\) and \(K = 4\), using the same number of training steps 
 and the same overall token budget. Refer Figure 2 below, it can be seen that GPT models (**Ours**) with looping mechanism achieves 
-higher generalization compared to the baseline. This experiment is fully reproducible using the given codebase.
-
+higher generalization compared to the baseline. This makes (**Ours**) Looped-GPT more parameter efficient compared to the **Baseline**. This experiment is fully reproducible using the given codebase.
 
 <p align="left">
   <img src="Figures/gpt2-openwebtext.png" alt="GPT-2 OpenWebText training curve" width="600">
@@ -102,15 +102,42 @@ All models are trained on Fineweb for 10B tokens (75K steps) under similar train
 
 ---
 
-## Intuition: Why Looping leads to better generalization?
+## Pre-training with a Fixed FLOPs Budget: Is Looped-GPT Compute-Efficient?
 
-- **Architectural perspective :** The reverse residual connection from deeper layers to early layers provides a unique opportunity to the early transformer blocks. 
-During the looping mechanism, the early blocks process the tokens not just with the representations found below them, 
-but also the nuanced representations provided by the deeper layers. This whole process of multiple looping steps can be seen has iterative activation refinement (Refer Figure 1).
+Based on discussions on my X **[post](https://x.com/SunnySanyal9/status/2011956392093958623?s=20)** with [Lucas](https://x.com/giffmana) and some other training stalwarts, I decided to run a set of pre-training experiments under a **fixed compute budget** 
+of upto **4 × 10¹⁹ FLOPs**. This budget was chosen to ensure that **Looped-GPT can see the full dataset**, i.e., **9B tokens**, 
+within the allocated compute. For this setup, we performed a short learning-rate sweep and selected **6e-4** for our model,
+rest of the training details remain unchanged.
 
-- **Optimization perspective :** Recall residual connections acts as smoothing operators for the [loss landscapes](https://arxiv.org/abs/1712.09913). 
-The standard GPT's loss landscape should be more jacked up compared it's Looped counterpart. Hence we can intuitively assume that loss landscape should be less jacked up compared to
-standard GPT.
+We then pre-trained the following models up to the same FLOPs budget, early-stopping once the budget was reached:
+
+- **GPT-2 Large (770M parameters)**
+- **GPT-2 Medium (355M parameters)**
+- **Looped-GPT (355M parameters)**
+
+### Results
+
+In **Figure 4**, we observe that **Looped-GPT**, despite having the **same parameter count** as GPT-2 Medium and being trained under **matched compute**, achieves performance comparable to a model with **nearly twice the number of parameters**. 
+This highlights Looped-GPT’s strong **compute and parameter efficiency**. In other words, under the same FLOPs budget, Looped-GPT can effectively punch above its weight, matching the validation loss of a significantly larger model.
+
+<p align="left">
+  <img src="Figures/flops_vs_val_loss_v1.png" alt="GPT-2 OpenWebText training curve" width="600">
+  <br>
+  <em><strong>Figure 4.</strong>Validation loss vs. training FLOPs for a standard GPT-2 Large (770M) model (<strong>Baseline</strong>) 
+and Looped-GPT (355M) model (<strong>Ours</strong>) with loop steps (<strong>K = 4</strong>). All models are trained on OpenWebText under matched compute budget.</em>
+</p>
+
+In Figure 5, we observe a negative result: a standard GPT-2 Medium (355M), trained under the same compute budget but on twice the data, outperforms Looped-GPT by a comfortable margin. 
+Even so, these results should spark interest in the modeling and pre-training community especially for researchers with reasonable compute resources toward running broader scaling experiments to better understand when looping helps and when data wins.
+
+<p align="left">
+  <img src="Figures/flops_vs_val_loss_v2.png" alt="GPT-2 OpenWebText training curve" width="600">
+  <br>
+  <em><strong>Figure 5.</strong> Validation loss vs. training FLOPs for a standard GPT-2 Medium (355M) model (<strong>Baseline</strong>) and same-size Looped-GPT models (<strong>Ours</strong>) with loop steps (<strong>K = 4</strong>). 
+The Baseline is trained with 18 billion tokens (~2 epochs) whereas Looped-GPT is trained with 9 billion tokens (~1 epoch). 
+All models are trained on OpenWebText under matched compute budget.</em>
+</p>
+
 
 ---
 
@@ -143,6 +170,12 @@ $ python train.py
 - This codebase is not optimized for inference.
 - This pre-training approach may require additional compute; however, this is also true for other architectures such as MoEs. If an architecture or training recipe achieves consistently better generalization, it deserves 
 to be studied carefully despite higher compute costs.
+
+## Takehome Summary: Looping during pre-training generalizes better.
+
+Across our pre-training experiments, looping consistently improves generalization for same-size 355M Looped-GPT models with K=2 and K=4 beat a standard 355M GPT-2 baseline at matched step/token budgets, and on FineWeb, a 282M Looped-LLAMA similarly outperforms its baseline. 
+Notably, under a fixed compute budget (~4×10¹⁹ FLOPs), Looped-GPT (355M, K=4) reaches 
+validation loss comparable to a much larger 770M GPT-2 model, highlighting strong parameter and compute efficiency in this regime.
 
 ---
 
