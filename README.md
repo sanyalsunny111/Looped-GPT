@@ -102,7 +102,7 @@ All models are trained on Fineweb for 10B tokens (75K steps) under similar train
 
 ---
 
-## Pre-training with a Fixed FLOPs Budget: Is Looped-GPT Compute-Efficient?
+## Pre-training with Fixed Compute Budget: Is Looped-GPT Compute-Efficient?
 
 Based on discussions on my X **[post](https://x.com/SunnySanyal9/status/2011956392093958623?s=20)** with [Lucas](https://x.com/giffmana) and some other training stalwarts, I decided to run a set of pre-training experiments under a **fixed compute budget** 
 of upto **4 × 10¹⁹ FLOPs**. This budget was chosen to ensure that **Looped-GPT can see the full dataset**, i.e., **9B tokens**, 
@@ -127,8 +127,8 @@ This highlights Looped-GPT’s strong **compute and parameter efficiency**. In o
 and Looped-GPT (355M) model (<strong>Ours</strong>) with loop steps (<strong>K = 4</strong>). All models are trained on OpenWebText under matched compute budget.</em>
 </p>
 
-In Figure 5, we observe a negative result: a standard GPT-2 Medium (355M), trained under the same compute budget but on twice the data, outperforms Looped-GPT by a comfortable margin. 
-Even so, these results should spark interest in the modeling and pre-training community especially for researchers with reasonable compute resources toward running broader scaling experiments to better understand when looping helps and when data wins.
+In **Figure 5**, we observe a negative result: a standard GPT-2 Medium (355M), trained under the same compute budget but on twice the data, outperforms Looped-GPT by a comfortable margin. 
+Even so, these results should spark interest in the modeling and pre-training community especially for researchers with large-scale compute resources toward running broader scaling experiments to better understand when looping helps and when data wins.
 
 <p align="left">
   <img src="Figures/flops_vs_val_loss_v2.png" alt="GPT-2 OpenWebText training curve" width="600">
@@ -164,18 +164,18 @@ $ python train.py
 ```
 
 ---
+## Final thoughts
 
-## Limitations of this Codebase
+### Limitations of this Codebase
 
 - This codebase is not optimized for inference.
 - This pre-training approach may require additional compute; however, this is also true for other architectures such as MoEs. If an architecture or training recipe achieves consistently better generalization, it deserves 
 to be studied carefully despite higher compute costs.
 
-## Takehome Summary: Looping during pre-training generalizes better.
-
-Across our pre-training experiments, looping consistently improves generalization for same-size 355M Looped-GPT models with K=2 and K=4 beat a standard 355M GPT-2 baseline at matched step/token budgets, and on FineWeb, a 282M Looped-LLAMA similarly outperforms its baseline. 
-Notably, under a fixed compute budget (~4×10¹⁹ FLOPs), Looped-GPT (355M, K=4) reaches 
-validation loss comparable to a much larger 770M GPT-2 model, highlighting strong parameter and compute efficiency in this regime.
+> 💡 **Summary: Looping during pre-training generalizes better**
+>
+> Across our pre-training experiments, looping consistently improves generalization. Same-size **355M Looped-GPT** models with **K = 2** and **K = 4** outperform a standard **355M GPT-2** baseline at matched step and token budgets, and on **FineWeb**, a **282M Looped-LLAMA** similarly beats its baseline. 
+> Notably, under a fixed compute budget (~**4 × 10¹⁹ FLOPs**), **Looped-GPT (355M, K = 4)** achieves validation loss comparable to a much larger **770M GPT-2**, highlighting strong **parameter and compute efficiency** in this regime.
 
 ---
 
