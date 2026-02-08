@@ -9,7 +9,24 @@
 
 **Author:** Sunny Sanyal  
 **First posted:** January 15, 2026 \
-**Updated on:** February 7, 2026
+**Updated on:** February 8, 2026
+
+---
+
+## Table of Contents
+
+- [Looped-GPT Pre-Training](#looped-gpt-pre-training)
+  - [Forward Pass (Pseudocode)](#forward-pass-pseudocode)
+  - [Backward Pass with Backpropagation through Depth (Pseudocode)](#backward-pass-with-backpropagation-through-depth-pseudocode)
+- [Pre-training Results (355M GPT2 model with OpenWebText)](#pre-training-results-355m-gpt2-model-with-openwebtext)
+- [Pre-training Results (282M LLAMA with Fineweb)](#pre-training-results-282m-llama-with-fineweb)
+- [Pre-training with Fixed Compute Budget: Is Looped-GPT Compute-Efficient?](#pre-training-with-fixed-compute-budget-is-looped-gpt-compute-efficient)
+- [Intuition: Why Looping leads to better generalization?](#intuition-why-looping-leads-to-better-generalization)
+- [Reproduce Our Results](#reproduce-our-results)
+- [Final thoughts](#final-thoughts)
+- [References (Extended Reading)](#references-extended-reading)
+- [Citation](#citation)
+
 
 ---
 
@@ -25,7 +42,7 @@
 ## Looped-GPT Pre-Training
 
 Looped-GPT has **reverse residual connection** that feeds the output of the final transformer block (layer) back into the input embedding. 
-Unlike standard Transformer residuals, which operate in the forward direction by connecting a module’s input to its output or 
+Unlike standard Transformer residuals, which operate in the forward direction by connecting a module's input to its output or 
 by connecting early layers to deeper ones via highway connections, Looped-GPT reverses this flow: a deeper representation is 
 residually injected into a lower layer. During training, the model performs (K) forward passes i.e. K-1 refinement steps followed by a final forward pass and a single backward pass, 
 using **backpropagation through depth (BPTD)** without truncation.
@@ -118,7 +135,7 @@ We then pre-trained the following models up to the same FLOPs budget, early-stop
 ### Results
 
 In **Figure 4**, we observe that **Looped-GPT**, despite having the **same parameter count** as GPT-2 Medium and being trained under **matched compute**, achieves performance comparable to a model with **nearly twice the number of parameters**. 
-This highlights Looped-GPT’s strong **compute and parameter efficiency**. In other words, under the same FLOPs budget, Looped-GPT can effectively punch above its weight, matching the validation loss of a significantly larger model.
+This highlights Looped-GPT's strong **compute and parameter efficiency**. In other words, under the same FLOPs budget, Looped-GPT can effectively punch above its weight, matching the validation loss of a significantly larger model.
 
 <p align="left">
   <img src="Figures/flops_vs_val_loss_v1.png" alt="GPT-2 OpenWebText training curve" width="600">
@@ -138,6 +155,17 @@ The Baseline is trained with 18 billion tokens (~2 epochs) whereas Looped-GPT is
 All models are trained on OpenWebText under matched compute budget.</em>
 </p>
 
+
+---
+## Intuition: Why Looping leads to better generalization?
+
+- **Architectural perspective :** The reverse residual connection from deeper layers to early layers provides a unique opportunity to the early transformer blocks. 
+During the looping mechanism, the early blocks process the tokens not just with the representations found below them, 
+but also the nuanced representations provided by the deeper layers. This whole process of multiple looping steps can be seen has iterative activation refinement (Refer Figure 1).
+
+- **Optimization perspective :** Recall residual connections acts as smoothing operators for the [loss landscapes](https://arxiv.org/abs/1712.09913). 
+The standard GPT's loss landscape should be more jacked up compared it's Looped counterpart. Hence we can intuitively assume that loss landscape should be less jacked up compared to
+standard GPT.
 
 ---
 
@@ -208,3 +236,8 @@ to be studied carefully despite higher compute costs.
 ## License
 
 MIT
+
+---
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=sanyalsunny111/Looped-GPT&type=date&legend=top-left)](https://www.star-history.com/#sanyalsunny111/Looped-GPT&type=date&legend=top-left)
