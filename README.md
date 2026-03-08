@@ -1,8 +1,12 @@
 # Looped-GPT
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Blog](https://img.shields.io/badge/Blog-post-blue.svg)](https://sanyalsunny111.github.io/posts/2026-01-15-post1-looped-gpt/)
+
+
 ---
 <p align="left">
-  <img src="Figures/Looped-GPT.png" alt="Looped-GPT logo" width="300">
+  <img src="Figures/Looped-GPT.png" alt="Looped-GPT logo" width="500">
 </p>
 
 **Looped-GPT** is a minimal, lightweight, and highly hackable implementation of **Looped Transformer** built on top of GPT architecture.
@@ -224,12 +228,12 @@ to be studied carefully despite higher compute costs.
 ## Citation
 
 ```bibtex
-@misc{Looped-GPT,
+@misc{sanyal2026looped-gpt,
   author = {Sunny Sanyal},
-  title = {Looped-GPT: minimal, lightweight, and highly hackable implementation of Looped Transformers built on top of GPT architecture},
+  title = {Looped-GPT: Looping During Pre-training improves Generalization},
   year = {2026},
-  publisher = {GitHub},
-  url = {https://github.com/sanyalsunny111/Looped-GPT}
+  publisher = {Blog},
+  url = {https://sanyalsunny111.github.io/posts/2026-01-15-post1-looped-gpt/}
 }
 ```
 
